@@ -3,45 +3,67 @@ package ProgramEnkrip.CaesarCIper;
 import java.util.Scanner;
 
 public class CaesarCiper {
-    public static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+    private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 
     public static String encrypt(String text, int shiftKey) {
         text = text.toLowerCase();
-        String encryptedText = "";
-        for (int i = 0; i < text.length(); i++) {
-            int charPosition = ALPHABET.indexOf(text.charAt(i));
-            int keyValue = (shiftKey + charPosition) % 26;
-            char replaceVal = ALPHABET.charAt(keyValue);
-            encryptedText += replaceVal;
+        StringBuilder encryptedText = new StringBuilder();
+
+        for (char character : text.toCharArray()) {
+            if (Character.isLetter(character)) {
+                int position = ALPHABET.indexOf(character);
+                int newPosition = (position + shiftKey) % 26;
+                encryptedText.append(ALPHABET.charAt(newPosition));
+            } else {
+                encryptedText.append(character);
+            }
         }
-        return encryptedText;
+
+        return encryptedText.toString();
     }
 
     public static String decrypt(String text, int shiftKey) {
         text = text.toLowerCase();
-        String decryptedText = "";
-        for (int i = 0; i < text.length(); i++) {
-            int charPosition = ALPHABET.indexOf(text.charAt(i));
-            int keyValue = (shiftKey + charPosition) % 26;
-            if (keyValue < 0) {
-                keyValue = ALPHABET.length() + keyValue;
-            }
-            char replaceVal = ALPHABET.charAt(keyValue);
-            decryptedText += replaceVal;
-        }
-        return decryptedText;
+        StringBuilder decryptedText = new StringBuilder();
 
+        for (char character : text.toCharArray()) {
+            if (Character.isLetter(character)) {
+                int position = ALPHABET.indexOf(character);
+                int newPosition = (position - shiftKey) % 26;
+                if (newPosition < 0) {
+                    newPosition += ALPHABET.length();
+                }
+                decryptedText.append(ALPHABET.charAt(newPosition));
+            } else {
+                decryptedText.append(character);
+            }
+        }
+
+        return decryptedText.toString();
     }
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Enter the string for encryption : ");
-        String message = sc.nextLine();
-        System.out.print("Enter the shift key : ");
-        int shiftKey = sc.nextInt();
-        String encryptedMsg = encrypt(message, shiftKey);
-        System.out.println("Encrypted Message : " + encryptedMsg);
-        String decryptedMsg = decrypt(encryptedMsg, shiftKey);
-        System.out.println("Decrypted Message : " + decryptedMsg);
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Do you want to encrypt or decrypt? (E/D): ");
+        String choice = scanner.nextLine();
+
+        if (choice.equalsIgnoreCase("E")) {
+            System.out.print("Enter the text to encrypt: ");
+            String text = scanner.nextLine();
+            System.out.print("Enter the shift key: ");
+            int shiftKey = scanner.nextInt();
+            System.out.print("Encrypted text: " + encrypt(text, shiftKey));
+        } else if (choice.equalsIgnoreCase("D")) {
+            System.out.print("Enter the text to decrypt: ");
+            String text = scanner.nextLine();
+            System.out.print("Enter the shift key: ");
+            int shiftKey = scanner.nextInt();
+            System.out.print("Decrypted text: " + decrypt(text, shiftKey));
+        } else {
+            System.out.println("Invalid choice. Please enter 'E' for encryption or 'D' for decryption.");
+        }
+
+        scanner.close();
     }
 }
